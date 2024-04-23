@@ -12,7 +12,8 @@ openai = OpenAI(
     api_key = os.getenv('OPENAI_API_SECRET_KEY')
 )
 
-app = FastAPI ()
+app = FastAPI()
+
 templates = Jinja2Templates(directory="templates")
 
 chat_responses = []
@@ -21,8 +22,11 @@ chat_responses = []
 async def chat_page(request: Request):
     return templates.TemplateResponse("home.html", {"request": request, "chat_responses": chat_responses})
 
+
 chat_log = [{'role': 'system',
-             'content': 'You tell jokes.'}]
+             'content': 'You tell jokes.'
+             }]
+
 
 @app.websocket("/ws")
 async def chat(websocket: WebSocket):
@@ -55,16 +59,16 @@ async def chat(websocket: WebSocket):
             break
 
 
-@app.post('/', response_class=HTMLResponse)
+@app.post("/", response_class=HTMLResponse)
 async def chat(request: Request, user_input: Annotated[str, Form()]):
 
     chat_log.append({'role': 'user', 'content': user_input})
     chat_responses.append(user_input)
 
     response = openai.chat.completions.create(
-        model = 'gpt-3.5-turbo',
-        messages = chat_log,
-        temperature= 0.6
+        model='gpt-4',
+        messages=chat_log,
+        temperature=0.6
     )
 
     bot_response = response.choices[0].message.content
@@ -83,9 +87,9 @@ async def image_page(request: Request):
 async def create_image(request: Request, user_input: Annotated[str, Form()]):
 
     response = openai.images.generate(
-        prompt = user_input,
-        n = 1,
-        size = "256x256"
+        prompt=user_input,
+        n=1,
+        size="256x256"
     )
 
     image_url = response.data[0].url
