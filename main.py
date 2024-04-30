@@ -43,11 +43,11 @@ async def chat(websocket: WebSocket):
                 model='gpt-4',
                 messages=chat_log,
                 temperature=0.6,
-                stream=True
+                stream=True # Right here
             )
 
             ai_response = ''
-
+ 
             for chunk in response:
                 if chunk.choices[0].delta.content is not None:
                     ai_response += chunk.choices[0].delta.content
